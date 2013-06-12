@@ -1438,6 +1438,14 @@
 			this.acquire();
 			var json = Backbone.Model.prototype.toJSON.call( this, options );
 
+			if ( options && options.includeInJSON ) {
+				for ( var key in json ) {
+					if ( !_.contains( options.includeInJSON, key ) ) {
+						delete json[ key ];
+					}
+				}
+			}
+
 			if ( this.constructor._superModel && !( this.constructor._subModelTypeAttribute in json ) ) {
 				json[ this.constructor._subModelTypeAttribute ] = this.constructor._subModelTypeValue;
 			}
@@ -1474,11 +1482,7 @@
 					if ( related instanceof Backbone.Collection ) {
 						value = [];
 						related.each( function( model ) {
-							var curJson = {};
-							_.each( includeInJSON, function( key ) {
-								curJson[ key ] = model.get( key );
-							});
-							value.push( curJson );
+							value.push( model.toJSON( _.extend( { includeInJSON: includeInJSON }, options ) ) );
 						});
 					}
 					else if ( related instanceof Backbone.Model ) {
