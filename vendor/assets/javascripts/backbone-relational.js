@@ -1659,6 +1659,8 @@
 				else if ( !model && options.create !== false ) {
 					model = this.build( attributes, options );
 				}
+			} else if ( !model ) {
+				model = this.build( { id: attributes }, options );
 			}
 
 			return model;
